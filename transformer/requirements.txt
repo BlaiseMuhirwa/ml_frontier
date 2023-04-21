@@ -1,0 +1,7 @@
+torch
+torchtext
+numpy 
+black 
+spacy 
+pandas
+spacy 
