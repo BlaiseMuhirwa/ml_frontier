@@ -63,7 +63,7 @@ def split_dataset(
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     dataset_size = len(dataset)
     training_set_size = int(dataset_size * 0.7)
-    testing_set_size = int(dataset_size * 0.00001)
+    testing_set_size = int(dataset_size * 0.1)
     validation_set_size = int(dataset_size * 0.2)
 
     training_set = dataset[:training_set_size]
@@ -79,18 +79,13 @@ def process_dataset(
     fr_vocab: torchtext.vocab.Vocab,
     en_tokenizer,
     fr_tokenizer,
-    testing=False,
 ) -> List[Tuple[torch.Tensor, torch.Tensor]]:
     data = []
     for _, row in dataset.iterrows():
         english_tensor = torch.tensor(
             [en_vocab[token] for token in en_tokenizer(row["source"])], dtype=torch.long
         )
-        if testing:
-            tokens = en_tokenizer(row["source"])
-            ids = [en_vocab[token] for token in en_tokenizer(row["source"])]
-            print(f"english_tokens = {tokens}")
-            print(f"ids = {ids}")
+
         french_tensor = torch.tensor(
             [fr_vocab[token] for token in fr_tokenizer(row["target"])], dtype=torch.long
         )
@@ -104,7 +99,6 @@ def get_dataloader(
     batch_size: int,
     fr_vocab: torchtext.vocab.Vocab,
 ) -> DataLoader:
-    pass
     pad_index, bos_index, eos_index = (
         fr_vocab["<pad>"],
         fr_vocab["<bos>"],
@@ -154,7 +148,6 @@ if __name__ == "__main__":
         fr_vocab=fr_vocab,
         en_tokenizer=en_tokenizer,
         fr_tokenizer=fr_tokenizer,
-        testing=True,
     )
     validation_data = process_dataset(
         dataset=validation_data,
